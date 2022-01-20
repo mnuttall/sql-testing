@@ -12,6 +12,10 @@ import java.util.List;
 
 public class TestCompletion {
 
+    // https://issues.apache.org/jira/browse/CALCITE-2439
+    // This open issue from 2018 looks relevant - I'm not sure if it means that completing `SELECT a.^ from x.y a`
+    // is not possible, or just limited to certain constructions. 
+
     static SqlAdvisor sqlAdvisor;
 
     @BeforeClass
