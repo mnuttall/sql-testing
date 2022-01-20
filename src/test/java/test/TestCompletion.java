@@ -3,9 +3,11 @@ package test;
 import org.apache.calcite.sql.advise.SqlAdvisor;
 import org.apache.calcite.sql.parser.StringAndPos;
 import org.apache.calcite.sql.validate.SqlMoniker;
+import org.apache.calcite.sql.validate.SqlMonikerType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class TestCompletion {
@@ -34,7 +36,7 @@ public class TestCompletion {
 
     @Test
     public void completionForColumnNames() {
-        String sql = "select a.^ from sales.emp a";
+        String sql = "select a.^ from catalog.sales.emp a";
         StringAndPos sap = StringAndPos.of(sql);
 
         List<SqlMoniker> results = sqlAdvisor.getCompletionHints(
@@ -44,5 +46,25 @@ public class TestCompletion {
         for (SqlMoniker s : results) {
             System.out.println("--> " + s.toString());
         }
+    }
+
+    @Test
+    public void tryOtherCompletionMethod() {
+        String sql = "select a.^ from emp a";
+        StringAndPos sap = StringAndPos.of(sql);
+        String replaced[] = new String[]{"one", "two", "three"};
+
+        List<SqlMoniker> results = sqlAdvisor.getCompletionHints(sql, sap.cursor, replaced);
+        System.out.println ("Replaced = " + Arrays.toString(replaced));
+        int keywords = 0;
+        for (SqlMoniker s : results) {
+            if (s.getType() == SqlMonikerType.KEYWORD) {
+                keywords++;
+            } else {
+                System.out.println(s.toString() + " type=" + s.getType().toString());
+            }
+        }
+        System.out.println ("Total keywords = " + keywords);
+
     }
 }
